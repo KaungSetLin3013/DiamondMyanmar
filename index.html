@@ -185,17 +185,17 @@ var IDX={ja:0,en:1,my:2},cur='en',KEY='dm-lang';
 function fmt(n){return n.toLocaleString('en-US')}
 var U={
 ja:{title:'Diamond Myanmar メニュー',sub:'ミャンマー料理 チェーオー',navl:'メニューカテゴリ',hint:'写真をタップで拡大 Tap a dish to enlarge',spicy:'辛さ',zoom:'拡大表示',close:'閉じる',
- hrs:'営業時間 Open hours',tel:'電話 Phone',loc:'場所 Location',map:'Google マップで開く',bar:'+300円 for 1 drink／ドリンク1本',
+ hrs:'営業時間 Open hours',tel:'電話 Phone',loc:'場所 Location',fb:'Facebook ページ Facebook Page',map:'Google マップで開く',bar:'+300円 for 1 drink／ドリンク1本',
  foot:'価格は全て税込表記です。<br>※ 価格・内容は変更になる場合があります。',
  days:[['日曜日','Sunday'],['月曜日','Monday'],['火曜日','Tuesday'],['水曜日','Wednesday'],['木曜日','Thursday'],['金曜日','Friday'],['土曜日','Saturday']],
  yen:function(n){return fmt(n)+'<small>円</small>'}},
 en:{title:'Diamond Myanmar Menu',sub:'Myanmar Cuisine · Kyay Oh',navl:'Menu categories',hint:'Tap a dish to enlarge',spicy:'Spicy',zoom:'Enlarged view',close:'Close',
- hrs:'Open hours',tel:'Phone',loc:'Location',map:'Open in Google Maps',bar:'+¥300 per drink',
+ hrs:'Open hours',tel:'Phone',loc:'Location',fb:'Facebook Page',map:'Open in Google Maps',bar:'+¥300 per drink',
  foot:'All prices include tax.<br>※ Prices and contents are subject to change.',
  days:[['Sunday'],['Monday'],['Tuesday'],['Wednesday'],['Thursday'],['Friday'],['Saturday']],
  yen:function(n){return '¥'+fmt(n)}},
 my:{title:'Diamond Myanmar မီနူး',sub:'မြန်မာအစားအစာ',navl:'မီနူးအမျိုးအစားများ',hint:'ဓာတ်ပုံကို နှိပ်၍ ချဲ့ကြည့်ပါ',spicy:'အစပ်',zoom:'ချဲ့ကြည့်ခြင်း',close:'ပိတ်ရန်',
- hrs:'ဖွင့်ချိန်',tel:'ဖုန်း',loc:'တည်နေရာ',map:'Google Maps တွင် ဖွင့်ရန်',bar:'အဖျော်ယမကာ တစ်ခုလျှင် +300 ယန်း',
+ hrs:'ဖွင့်ချိန်',tel:'ဖုန်း',loc:'တည်နေရာ',fb:'Facebook စာမျက်နှာ',map:'Google Maps တွင် ဖွင့်ရန်',bar:'အဖျော်ယမကာ တစ်ခုလျှင် +300 ယန်း',
  foot:'ဈေးနှုန်းအားလုံးတွင် အခွန်ပါဝင်ပြီးဖြစ်ပါသည်။<br>※ ဈေးနှုန်းနှင့် အကြောင်းအရာများ ပြောင်းလဲနိုင်ပါသည်။',
  days:[['တနင်္ဂနွေ'],['တနင်္လာ'],['အင်္ဂါ'],['ဗုဒ္ဓဟူး'],['ကြာသပတေး'],['သောကြာ'],['စနေ']],
  yen:function(n){return fmt(n)+'<small>ယန်း</small>'}}
@@ -307,7 +307,7 @@ function render(){
  var nv=document.getElementById('nav');nv.innerHTML=nav;nv.setAttribute('aria-label',u.navl);
  document.getElementById('hsub').textContent=u.sub;
  var rows=u.days.map(function(d){return '<dt>'+d[0]+(d[1]?'<small>'+d[1]+'</small>':'')+'</dt><dd>11:00–22:00</dd>'}).join('');
- document.getElementById('infowrap').innerHTML='<section id="info">'+head('info')+'<div class="box"><div><h3>'+u.hrs+'</h3><dl class="hrs">'+rows+'</dl></div><div><h3>'+u.tel+'</h3><a class="btn" href="tel:08053231969">080-5323-1969</a></div><div><h3>'+u.loc+'</h3><a class="btn" href="https://maps.app.goo.gl/8TCkXE5r4Dw6vfaaA" target="_blank" rel="noopener">'+u.map+'</a></div></div></section>';
+ document.getElementById('infowrap').innerHTML='<section id="info">'+head('info')+'<div class="box"><div><h3>'+u.hrs+'</h3><dl class="hrs">'+rows+'</dl></div><div><h3>'+u.tel+'</h3><a class="btn" href="tel:08053231969">080-5323-1969</a></div><div><h3>'+u.loc+'</h3><a class="btn" href="https://maps.app.goo.gl/8TCkXE5r4Dw6vfaaA" target="_blank" rel="noopener">'+u.map+'</a></div><div><h3>'+u.fb+'</h3><a class="btn" href="https://www.facebook.com/profile.php?id=61578700910871" target="_blank" rel="noopener">Facebook</a></div></div></section>';
  document.getElementById('foot').innerHTML=u.foot;
  var lb=document.getElementById('lb');lb.setAttribute('aria-label',u.zoom);lb.querySelector('.x').setAttribute('aria-label',u.close);
  [].forEach.call(document.querySelectorAll('.item,.opt'),function(it){if(it.querySelector('img')){it.tabIndex=0;it.setAttribute('role','button')}});
