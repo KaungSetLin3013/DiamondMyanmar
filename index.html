@@ -52,7 +52,7 @@ h2 small{font-size:15px;font-weight:700;color:var(--h2c)}
 .set h4{margin:0 0 4px;font-size:14px;color:var(--muted)}
 .set .opt{margin:0 0 10px}
 .set .total{display:flex;justify-content:center;margin-top:6px}
-.drinkbar{display:inline-block;background:var(--gold);color:#4a1a10;font-weight:900;border-radius:999px;padding:4px 16px;margin-bottom:12px}
+.drinkbar{display:block;background:var(--card);color:var(--ink);font-weight:700;border:1.5px solid rgba(184,134,43,.6);border-radius:14px;padding:10px 14px;margin-bottom:12px}
 .drinks .item{align-items:flex-start;flex-direction:column;gap:2px}
 .drinks .item p{margin:0;font-size:14px;color:var(--muted)}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:0 16px 40px}
@@ -160,6 +160,20 @@ html[lang="my"] h2{font-family:"Noto Sans Myanmar","Zen Maru Gothic",sans-serif;
 html[lang="my"] header p,html[lang="my"] h2,html[lang="my"] nav a,html[lang="my"] .item h3,html[lang="my"] footer,html[lang="my"] #lb h3,html[lang="my"] .drinkbar{letter-spacing:0}
 html[lang="my"] .item h3,html[lang="my"] #lb h3,html[lang="my"] .set .opt b{line-height:1.7;font-weight:600}
 html[lang="my"] nav a{padding-top:4px}
+
+/* ---- UX laws pass ---- */
+/* Law 5 connectedness: a "+" joins the rice and side-dish columns of the set menu */
+.set .cols{gap:28px}
+.set .cols>div:nth-child(2){position:relative}
+.set .cols>div:nth-child(2)::before{content:"+";content:"+"/"";position:absolute;top:50%;left:-14px;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--gold-g);color:#4a1a10;border:1.5px solid var(--gold-d);font-weight:900;font-size:16px;line-height:21px;text-align:center}
+@media (max-width:480px){.set .cols>div:nth-child(2)::before{top:-14px;left:50%}}
+/* Law 2 figure-ground: nothing behind the open dish dialog competes (backdrop is already 72%) */
+body:has(dialog#lb[open]){overflow:hidden}
+/* Law 4 fill in what you already know: today's row is highlighted in the hours list */
+.hrs dt.today,.hrs dd.today{background:rgba(245,166,35,.25);font-weight:900;padding:4px 10px}
+.hrs dt.today{border-radius:10px 0 0 10px;margin-right:-18px;padding-right:28px}
+.hrs dd.today{border-radius:0 10px 10px 0}
+.hrs .tdy{display:inline-block;margin-left:8px;padding:0 8px;border-radius:999px;background:var(--red);color:var(--red-ink);font-size:12px;font-weight:700}
 </style>
 </head>
 <body>
@@ -306,7 +320,8 @@ function render(){
  document.getElementById('hero').innerHTML=D0.map(function(x,i){return '<a href="#popular">'+im('popular',i,t(x.n))+'</a>'}).join('');
  var nv=document.getElementById('nav');nv.innerHTML=nav;nv.setAttribute('aria-label',u.navl);
  document.getElementById('hsub').textContent=u.sub;
- var rows=u.days.map(function(d){return '<dt>'+d[0]+(d[1]?'<small>'+d[1]+'</small>':'')+'</dt><dd>11:00–22:00</dd>'}).join('');
+ var TD={ja:'本日',en:'Today',my:'ယနေ့'},tk=-1;try{tk=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'})).getDay()}catch(e){}
+  var rows=u.days.map(function(d,i){var c=i===tk?' class="today"':'';return '<dt'+c+'>'+d[0]+(d[1]?'<small>'+d[1]+'</small>':'')+(i===tk?'<span class="tdy">'+TD[cur]+'</span>':'')+'</dt><dd'+c+'>11:00–22:00</dd>'}).join('');
  document.getElementById('infowrap').innerHTML='<section id="info">'+head('info')+'<div class="box"><div><h3>'+u.hrs+'</h3><dl class="hrs">'+rows+'</dl></div><div><h3>'+u.tel+'</h3><a class="btn" href="tel:08053231969">080-5323-1969</a></div><div><h3>'+u.loc+'</h3><a class="btn" href="https://maps.app.goo.gl/8TCkXE5r4Dw6vfaaA" target="_blank" rel="noopener">'+u.map+'</a></div><div><h3>'+u.fb+'</h3><a class="btn" href="https://www.facebook.com/profile.php?id=61578700910871" target="_blank" rel="noopener">Facebook</a></div></div></section>';
  document.getElementById('foot').innerHTML=u.foot;
  var lb=document.getElementById('lb');lb.setAttribute('aria-label',u.zoom);lb.querySelector('.x').setAttribute('aria-label',u.close);
