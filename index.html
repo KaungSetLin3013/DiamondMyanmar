@@ -174,6 +174,41 @@ body:has(dialog#lb[open]){overflow:hidden}
 .hrs dt.today{border-radius:10px 0 0 10px;margin-right:-18px;padding-right:28px}
 .hrs dd.today{border-radius:0 10px 10px 0}
 .hrs .tdy{display:inline-block;margin-left:8px;padding:0 8px;border-radius:999px;background:var(--red);color:var(--red-ink);font-size:12px;font-weight:700}
+
+/* ---- Playbook pass: button spec + motion (transform and opacity only) ---- */
+:root{--spring:cubic-bezier(.34,1.56,.64,1);--out:cubic-bezier(.2,.8,.2,1)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 72px)}
+/* Buttons: 48px tall; press sinks fast (80ms), release springs back (400ms) */
+nav a{min-height:48px;transition:transform 400ms var(--spring),color 150ms}
+.lang button{min-height:48px;min-width:48px;transition:transform 400ms var(--spring)}
+#lb .x{width:48px;height:48px;transition:transform 400ms var(--spring)}
+.btn{transition:transform 400ms var(--spring)}
+nav a:active,.lang button:active,#lb .x:active,.btn:active{transform:scale(.94);transition-duration:80ms}
+.btn:active{transform:scale(.95)}
+/* Cards: same press feedback on top of the existing hover lift */
+.item[tabindex],.opt[tabindex]{transition:transform 400ms var(--spring),box-shadow 250ms ease}
+.item[tabindex]:active,.opt[tabindex]:active{transform:scale(.97);transition-duration:80ms}
+/* The tab you land on, and the language you pick, pop in */
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.06)}100%{transform:none}}
+nav a.on,.lang button[aria-pressed="true"]{animation:pop 320ms var(--spring)}
+/* Cards rise in 70ms apart as they scroll into view (added by script, only when motion is allowed) */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.rv:not(.in){opacity:0;transform:translateY(14px)}
+.rv.in{animation:rise 420ms var(--out) backwards;animation-delay:var(--d,0ms)}
+/* Dish dialog: fades and rises in, and back out, over a fading backdrop */
+dialog#lb{opacity:0;transform:translateY(16px) scale(.96);transition:opacity 220ms ease,transform 260ms var(--out),overlay 260ms allow-discrete,display 260ms allow-discrete}
+dialog#lb[open]{opacity:1;transform:none}
+dialog#lb::backdrop{opacity:0;transition:opacity 220ms ease,overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog#lb[open]::backdrop{opacity:1}
+@starting-style{dialog#lb[open]{opacity:0;transform:translateY(16px) scale(.96)}dialog#lb[open]::backdrop{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  nav a,.lang button,#lb .x,.btn,.item[tabindex],.opt[tabindex]{transition:none}
+  nav a:active,.lang button:active,#lb .x:active,.btn:active,.item[tabindex]:active,.opt[tabindex]:active{transform:none}
+  nav a.on,.lang button[aria-pressed="true"]{animation:none}
+  .rv:not(.in){opacity:1;transform:none}.rv.in{animation:none}
+  dialog#lb,dialog#lb::backdrop{transition:none;opacity:1;transform:none}
+}
+@media print{.rv:not(.in){opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -300,6 +335,15 @@ function observe(){if(!('IntersectionObserver' in window))return;if(io)io.discon
  var n=document.getElementById('nav'),links=[].slice.call(n.querySelectorAll('a'));
  io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;links.forEach(function(a){var on=a.getAttribute('href')==='#'+e.target.id;a.classList.toggle('on',on);if(on)n.scrollLeft=a.offsetLeft-n.clientWidth/2+a.offsetWidth/2})})},{rootMargin:'-30% 0px -60% 0px'});
  document.querySelectorAll('main section,#info').forEach(function(s){io.observe(s)})}
+var rio=null;
+function reveal(){
+ if(!('IntersectionObserver' in window)||(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches))return;
+ if(rio)rio.disconnect();
+ rio=new IntersectionObserver(function(es){var k=0;
+  es.forEach(function(e){if(!e.isIntersecting)return;
+   e.target.style.setProperty('--d',Math.min(k++,6)*70+'ms');
+   e.target.classList.add('in');rio.unobserve(e.target)})},{rootMargin:'0px 0px -6% 0px',threshold:.05});
+ [].forEach.call(document.querySelectorAll('.hint,.hero a,.item,.set,.infowrap .box'),function(el){el.classList.add('rv');rio.observe(el)})}
 function render(){
  var u=U[cur],h='',nav='';
  function add(id){nav+='<a href="#'+id+'">'+t(NAV[id])+'</a>'}
@@ -326,7 +370,7 @@ function render(){
  document.getElementById('foot').innerHTML=u.foot;
  var lb=document.getElementById('lb');lb.setAttribute('aria-label',u.zoom);lb.querySelector('.x').setAttribute('aria-label',u.close);
  [].forEach.call(document.querySelectorAll('.item,.opt'),function(it){if(it.querySelector('img')){it.tabIndex=0;it.setAttribute('role','button')}});
- observe();
+ observe();reveal();
 }
 function setLang(l,save){
  cur=l;document.documentElement.lang=l;document.title=U[l].title;render();
