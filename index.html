@@ -209,6 +209,76 @@ dialog#lb[open]::backdrop{opacity:1}
   dialog#lb,dialog#lb::backdrop{transition:none;opacity:1;transform:none}
 }
 @media print{.rv:not(.in){opacity:1;transform:none}}
+
+/* ---- Bottom tab bar: floating bubble + notch (5 tabs) ---- */
+@property --x{syntax:'<percentage>';inherits:true;initial-value:10%}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+body{padding-bottom:96px}
+html body nav.tab{--x:calc(var(--i,0)*20% + 10%);position:fixed;top:auto;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(calc(100% - 20px),520px);height:64px;padding:0;margin:0;display:flex;gap:0;overflow:visible;background:none;border:0;box-shadow:none;transform:translateX(-50%);z-index:20;filter:drop-shadow(0 6px 12px rgba(60,10,8,.32));transition:--x 420ms var(--out);scroll-snap-type:none}
+nav.tab .bg{position:absolute;inset:0;border-radius:26px;background:var(--card);box-shadow:inset 0 0 0 2px var(--line);-webkit-mask:radial-gradient(circle at var(--x) -4px,#0000 32px,#000 33.5px);mask:radial-gradient(circle at var(--x) -4px,#0000 32px,#000 33.5px)}
+html body nav.tab a{position:relative;flex:1 1 0;min-width:0;min-height:48px;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding:0 0 9px;border:0;border-radius:20px;background:none;color:var(--ink);font-size:12px;font-weight:700;line-height:1.2;transition:none;scroll-snap-align:none}
+nav.tab .ic{position:relative;width:28px;height:28px;display:grid;place-items:center;transition:transform 420ms var(--spring),color 150ms}
+nav.tab .ic::before{content:"";position:absolute;inset:-14px;border-radius:50%;background:var(--pr);opacity:0;transform:scale(.4);transition:transform 420ms var(--spring),opacity 150ms}
+nav.tab .ic svg{position:relative}
+nav.tab .lb{max-width:100%;padding:0 2px;white-space:nowrap;overflow:hidden;font-size:clamp(9.5px,2.9vw,11.5px)}
+html[lang="my"] nav.tab .lb{line-height:1.7}
+html body nav.tab a.on{animation:none;background:none;color:var(--ink)}
+html body nav.tab a.on .ic{transform:translateY(-27px);color:var(--pr-ink)}
+html body nav.tab a.on .ic::before{opacity:1;transform:scale(1)}
+html body nav.tab a.on .lb{font-weight:900}
+html body nav.tab a:hover,html body nav.tab a:focus-visible{background:none;color:var(--ink)}
+html body nav.tab a:focus-visible{outline:3px solid var(--red);outline-offset:-4px}
+html body nav.tab a:active{transform:none}
+html body nav.tab a:active .ic{transform:scale(.9)}
+html body nav.tab a.on:active .ic{transform:translateY(-27px) scale(.92)}
+@media (prefers-reduced-motion:reduce){html body nav.tab,nav.tab .ic,nav.tab .ic::before{transition:none}}
+/* Set menu: make the rule obvious (1 rice + 1 side dish = price) */
+.set .rule{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;margin-bottom:16px;padding-bottom:14px;border-bottom:2px dashed var(--line)}
+.set .rule i{font-style:normal;font-weight:900;font-size:24px;color:var(--ink)}
+.set .chip{font-weight:900;font-size:16px;color:var(--red);border:2px solid var(--red);border-radius:999px;padding:4px 14px}
+.set .rule .price{font-size:26px;padding:4px 18px}
+.set h4{font-size:16px;font-weight:900;color:var(--ink)}
+/* ---- Cute pass: jelly, chilli hop, price pop, wobble, steam, sparkles, bubble hop, confetti, bouncy dish pop-up ---- */
+@keyframes hop{0%,100%{transform:none}40%{transform:translateY(-6px) rotate(-14deg) scale(1.15)}}
+@keyframes pricepop{from{opacity:0;transform:scale(.5)}60%{transform:scale(1.12)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:none}20%{transform:rotate(-6deg) scale(1.06)}40%{transform:rotate(5deg) scale(1.06)}60%{transform:rotate(-3deg)}80%{transform:rotate(2deg)}}
+@keyframes wob{0%{transform:none}30%{transform:rotate(-7deg) scale(1.06)}60%{transform:rotate(5deg) scale(1.04)}100%{transform:none}}
+@keyframes steam{0%{opacity:0;transform:translateY(0) scale(.7)}30%{opacity:.7}100%{opacity:0;transform:translateY(-42px) scale(1.5)}}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4) rotate(0)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
+@keyframes iconhop{0%{transform:scale(.55) rotate(-18deg)}60%{transform:scale(1.18) rotate(6deg)}100%{transform:none}}
+@keyframes conf{from{opacity:1;transform:translate(0,0) rotate(0) scale(1)}to{opacity:0;transform:translate(var(--dx),calc(var(--dy) + 70px)) rotate(var(--r)) scale(.6)}}
+.item[tabindex]:active,.opt[tabindex]:active{transform:scale(1.03,.94)}
+.heat i{display:inline-block}
+.rv.in .heat i.on{animation:hop 600ms var(--spring) backwards}
+.heat i:nth-of-type(1){animation-delay:calc(var(--d,0ms) + 250ms)!important}.heat i:nth-of-type(2){animation-delay:calc(var(--d,0ms) + 330ms)!important}.heat i:nth-of-type(3){animation-delay:calc(var(--d,0ms) + 410ms)!important}.heat i:nth-of-type(4){animation-delay:calc(var(--d,0ms) + 490ms)!important}.heat i:nth-of-type(5){animation-delay:calc(var(--d,0ms) + 570ms)!important}
+.rv.in .price{animation:pricepop 500ms var(--spring) backwards;animation-delay:calc(var(--d,0ms) + 180ms)}
+.set.in .rule .price{animation:pricepop 500ms var(--spring) 250ms backwards,shake 700ms ease 1.1s}
+.item img{transition:transform 400ms var(--spring)}
+.item[tabindex]:active img{transform:rotate(-6deg) scale(1.08)}
+@media (hover:hover){.item[tabindex]:hover img{animation:wob 520ms var(--spring)}}
+header{position:relative}
+.hero a{position:relative}
+.hero a::before,.hero a::after{content:"";position:absolute;top:6%;left:34%;width:10px;height:26px;border-radius:50%;background:rgba(255,255,255,.6);filter:blur(5px);opacity:0;pointer-events:none;animation:steam 3.2s ease-in infinite}
+.hero a::after{left:56%;animation-delay:1.3s}
+.hero a:nth-child(2)::before{animation-delay:.7s}.hero a:nth-child(2)::after{animation-delay:2s}.hero a:nth-child(3)::before{animation-delay:1.4s}.hero a:nth-child(3)::after{animation-delay:2.6s}
+.sp{position:absolute;font-style:normal;color:var(--gold-l);opacity:0;pointer-events:none;animation:twinkle 2.6s ease-in-out infinite;animation-delay:var(--dl,0s)}
+html body nav.tab a.on .ic svg{animation:iconhop 520ms var(--spring)}
+html body nav.tab a.on .lb{animation:pop 320ms var(--spring)}
+.cf{position:fixed;width:8px;height:12px;border-radius:2px;z-index:30;pointer-events:none;animation:conf 900ms var(--out) forwards}
+.cf.c0{background:#f6d98a}.cf.c1{background:#c1272d}.cf.c2{background:#fff6e0}.cf.c3{background:#f5a623}
+dialog#lb{transform:translateY(24px) scale(.86);transition:opacity 220ms ease,transform 440ms var(--spring),overlay 440ms allow-discrete,display 440ms allow-discrete}
+dialog#lb[open]{transform:none}
+@starting-style{dialog#lb[open]{opacity:0;transform:translateY(24px) scale(.82)}dialog#lb[open]::backdrop{opacity:0}}
+dialog#lb[open] .lbimgs img{animation:iconhop 600ms var(--spring) 120ms backwards}
+@media (prefers-reduced-motion:reduce){.rv.in .heat i.on,.rv.in .price,.set.in .rule .price,.item[tabindex]:hover img,html body nav.tab a.on .ic svg,html body nav.tab a.on .lb,dialog#lb[open] .lbimgs img,.cf{animation:none!important}.hero a::before,.hero a::after,.sp{display:none}.item img,dialog#lb{transition:none}}
+/* Bigger, clearer spicy rating */
+.heat{font-size:14px;font-weight:900;color:var(--ink);align-items:center;gap:2px}
+.heat i{font-size:24px;line-height:1.1}
+.heat i:not(.on){opacity:.3}
+.heat i.on{filter:drop-shadow(0 1px 2px rgba(74,26,16,.35))}
+@media (max-width:480px){.heat i{font-size:22px}}
+#lb .heat i{font-size:30px}
+#lb .heat{font-size:16px}
 </style>
 </head>
 <body>
@@ -223,7 +293,7 @@ dialog#lb[open]::backdrop{opacity:1}
   <div class="my" lang="my">ကြေးအိုး</div>
   <div class="hero" id="hero"></div>
 </header>
-<nav id="nav"></nav>
+<nav id="nav" class="tab" style="--i:0"></nav>
 <main id="menu"></main>
 <div class="infowrap" id="infowrap"></div>
 <footer id="foot"></footer>
@@ -304,6 +374,7 @@ var D=[
 ];
 var SET={
  rice:['ご飯','Rice','ထမင်း'],side:['おかず','Side dish','ဟင်း'],
+ r1:['ご飯 1つ','1 Rice','ထမင်း ၁'],s1:['おかず 1つ','1 Side dish','ဟင်း ၁'],h1:['ご飯を1つ選ぶ','Choose 1 rice','ထမင်း ၁ မျိုး ရွေးပါ'],h2:['おかずを1つ選ぶ','Choose 1 side dish','ဟင်း ၁ မျိုး ရွေးပါ'],
  a:[['ミャンマー風エビ味噌ご飯サラダ','Myanmar-style Shrimp Paste Rice Salad','ငပိထမင်း'],0,4],
  b:[['ミャンマーチャーハン','Myanmar Fried Rice','ထမင်းကြော်'],3,0],
  c:[['豚の角煮','Braised Pork Belly','ဝက်ချိုပေါင်း'],1,0],
@@ -330,10 +401,21 @@ function itemHtml(key,j,x){var u=U[cur],nm=t(x.n),sb=x.s&&t(x.s),
  tags=(x.tag?'<span class="tag">'+t(TAG[x.tag])+'</span>':'')+(x.h?heat(x.h):'');
  return '<div class="item">'+im(key,j,nm)+'<div class="txt"><h3>'+nm+'</h3>'+(sb?'<p class="sub">'+sb+'</p>':'')+alts(x.n,'p')+(tags?'<div class="tags">'+tags+'</div>':'')+'</div><div class="price">'+u.yen(x.p)+'</div></div>'}
 function opt(o){var nm=t(o[0]);return '<p class="opt">'+im('set',o[1],nm)+'<span><b>'+nm+'</b>'+alts(o[0],'span')+(o[2]?heat(o[2]):'')+'</span></p>'}
+var curTab=0,lockT=0;
+var TABS=[
+{ids:['popular'],l:['人気','Popular','လူကြိုက်များ'],ic:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'},
+{ids:['traditional'],l:['伝統','Traditional','ရိုးရာ'],ic:'<path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 10h2M20 10h2M9 6h6"/>'},
+{ids:['soups','noodle-salads','offal','rice'],l:['メイン','Mains','အဓိက'],ic:'<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8 4c0 1.5 1 1.5 1 3M13 4c0 1.5 1 1.5 1 3"/>'},
+{ids:['set','breakfast','drinks'],l:['セット・飲物','Set & Drinks','ဆက်/အဖျော်'],ic:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 3c-2 2-2.5 5-2.5 8H17v10"/>'},
+{ids:['info'],l:['店舗情報','Info','ဆိုင်အချက်'],ic:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/>'}];
+function tabsHtml(){return '<i class="bg" aria-hidden="true"></i>'+TABS.map(function(g,i){return '<a href="#'+g.ids[0]+'" data-i="'+i+'"><span class="ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+g.ic+'</svg></span><span class="lb">'+t(g.l)+'</span></a>'}).join('')}
+function secTab(id){for(var i=0;i<TABS.length;i++)if(TABS[i].ids.indexOf(id)>-1)return i;return curTab}
+function setTab(i){curTab=i;var n=document.getElementById('nav');n.style.setProperty('--i',i);[].forEach.call(n.querySelectorAll('a'),function(a,k){a.classList.toggle('on',k===i);if(k===i)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')})}
+document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('a[data-i]');if(a){lockT=Date.now()+900;setTab(+a.getAttribute('data-i'))}});
+addEventListener('scroll',function(){if(Date.now()>lockT&&innerHeight+scrollY>=document.documentElement.scrollHeight-6)setTab(TABS.length-1)},{passive:true});
 var io=null;
 function observe(){if(!('IntersectionObserver' in window))return;if(io)io.disconnect();
- var n=document.getElementById('nav'),links=[].slice.call(n.querySelectorAll('a'));
- io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;links.forEach(function(a){var on=a.getAttribute('href')==='#'+e.target.id;a.classList.toggle('on',on);if(on)n.scrollLeft=a.offsetLeft-n.clientWidth/2+a.offsetWidth/2})})},{rootMargin:'-30% 0px -60% 0px'});
+ io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&Date.now()>lockT)setTab(secTab(e.target.id))})},{rootMargin:'-30% 0px -60% 0px'});
  document.querySelectorAll('main section,#info').forEach(function(s){io.observe(s)})}
 var rio=null;
 function reveal(){
@@ -352,7 +434,7 @@ function render(){
   h+='<section id="'+d.id+'"'+(d.id==='popular'?' class="big"':'')+'>'+head(d.id)+'<div class="list">'+d.items.map(function(x,j){return itemHtml(d.id,j,x)}).join('')+'</div></section>';
   if(d.id==='rice'){
    add('set');
-   h+='<section id="set">'+head('set')+'<div class="set"><div class="cols"><div><h4>'+t(SET.rice)+'</h4>'+opt(SET.a)+opt(SET.b)+'</div><div><h4>'+t(SET.side)+'</h4>'+opt(SET.c)+opt(SET.d)+'</div></div><div class="total"><div class="price">'+u.yen(1000)+'</div></div></div></section>';
+   h+='<section id="set">'+head('set')+'<div class="set"><div class="rule"><span class="chip">'+t(SET.r1)+'</span><i>+</i><span class="chip">'+t(SET.s1)+'</span><i>=</i><span class="price">'+u.yen(1000)+'</span></div><div class="cols"><div><h4>'+t(SET.h1)+'</h4>'+opt(SET.a)+opt(SET.b)+'</div><div><h4>'+t(SET.h2)+'</h4>'+opt(SET.c)+opt(SET.d)+'</div></div></div></section>';
    add('breakfast');
    h+='<section id="breakfast" class="bf">'+head('breakfast')+'<div class="list">'+BF.map(function(x,j){return itemHtml('breakfast',j,x)}).join('')+'</div></section>';
   }
@@ -362,7 +444,7 @@ function render(){
  var D0=D[0].items;
  document.getElementById('menu').innerHTML='<p class="hint">'+u.hint+'</p>'+h;
  document.getElementById('hero').innerHTML=D0.map(function(x,i){return '<a href="#popular">'+im('popular',i,t(x.n))+'</a>'}).join('');
- var nv=document.getElementById('nav');nv.innerHTML=nav;nv.setAttribute('aria-label',u.navl);
+ var nv=document.getElementById('nav');nv.innerHTML=tabsHtml();nv.setAttribute('aria-label',u.navl);
  document.getElementById('hsub').textContent=u.sub;
  var TD={ja:'本日',en:'Today',my:'ယနေ့'},tk=-1;try{tk=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'})).getDay()}catch(e){}
   var rows=u.days.map(function(d,i){var c=i===tk?' class="today"':'';return '<dt'+c+'>'+d[0]+(d[1]?'<small>'+d[1]+'</small>':'')+(i===tk?'<span class="tdy">'+TD[cur]+'</span>':'')+'</dt><dd'+c+'>11:00–22:00</dd>'}).join('');
@@ -370,7 +452,7 @@ function render(){
  document.getElementById('foot').innerHTML=u.foot;
  var lb=document.getElementById('lb');lb.setAttribute('aria-label',u.zoom);lb.querySelector('.x').setAttribute('aria-label',u.close);
  [].forEach.call(document.querySelectorAll('.item,.opt'),function(it){if(it.querySelector('img')){it.tabIndex=0;it.setAttribute('role','button')}});
- observe();reveal();
+ observe();reveal();setTab(curTab);
 }
 function setLang(l,save){
  cur=l;document.documentElement.lang=l;document.title=U[l].title;render();
@@ -392,6 +474,12 @@ q(lb,'.lbtags').innerHTML=tg?(tg.classList.contains('tags')?tg.innerHTML:tg.oute
 document.addEventListener('click',function(e){var it=e.target.closest('.item[tabindex],.opt[tabindex]');if(it&&!e.target.closest('dialog'))openLb(it)});
 document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('.item[tabindex],.opt[tabindex]')){e.preventDefault();openLb(e.target)}});
 lb.addEventListener('click',function(e){if(e.target===lb||e.target.closest('.x'))lb.close()})})();
+(function(){
+var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)'),h=document.querySelector('header');
+[[8,14],[22,62],[88,12],[76,70],[50,5],[93,46],[12,38]].forEach(function(p,i){var s=document.createElement('i');s.className='sp';s.textContent='\u2726';s.setAttribute('aria-hidden','true');s.style.cssText='left:'+p[0]+'%;top:'+p[1]+'%;--dl:'+(i*.45)+'s;font-size:'+(12+i%3*5)+'px';h.appendChild(s)});
+function burst(x,y){if(rm&&rm.matches)return;for(var i=0;i<16;i++){var c=document.createElement('i'),a=Math.PI*2*i/16+Math.random()*.4,d=60+Math.random()*60;c.className='cf c'+(i%4);c.style.cssText='left:'+x+'px;top:'+y+'px;--dx:'+Math.cos(a)*d+'px;--dy:'+(Math.sin(a)*d-30)+'px;--r:'+Math.round(Math.random()*540-270)+'deg';document.body.appendChild(c);setTimeout(function(n){return function(){n.remove()}}(c),1000)}}
+document.addEventListener('click',function(e){var a=e.target.closest('nav.tab a[data-i="4"],a.btn[href^="tel:"]');if(a){var r=a.getBoundingClientRect();burst(r.left+r.width/2,a.closest('nav')?r.top-10:r.top+r.height/2)}});
+})();
 setLang(detect(),false);
 </script>
 </body>
